@@ -74,7 +74,6 @@ export default {
 
 <template>
     <v-container>
-
         <v-row>
             <v-col>
                 <v-card max-width="1200" width="100%" class="p-4">
