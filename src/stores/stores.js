@@ -19,18 +19,15 @@ export const usePortfolioStore = defineStore('portfolio', {
       productquery: [],
       bankItems:[
         {
-          name: "Bank 1",
+          name: "Mega",
           rate: 3.25
         },
         {
-          name: "Bank 2",
+          name: "Local",
           rate: 2.75
         },
-        {name: "Bank 3",
+        {name: "Digital",
           rate: 4.1
-        },
-        {name: "Bank 4",
-          rate: 2.7
         },
       ]
     }

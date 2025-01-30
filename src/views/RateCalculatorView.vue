@@ -1,7 +1,6 @@
 <script setup>
 import { usePortfolioStore } from '@/stores/stores';
 import { mapStores } from 'pinia';
-
 </script>
 
 <script>
@@ -9,43 +8,73 @@ import { mapStores } from 'pinia';
 export default {
     data() {
         return {
+
             items: [],
+            selected: {text: "3 Month CD - 4.50%", val: 4.5, term: 3},
             itemquery: [],
-            skill: 25,
-            knowledge: 33,
-            power: 78,
+            rates:  [ 
+            { text: "3 Month CD - 4.50%", val: 4.5, term: 3 },
+            { text: "6 Months CD - 4.50%", val: 4.5, term: 6 },
+            { text: "12 Months CD - 3.75%", val: 3.75, term: 12 },
+            { text: "18 Months CD - 1.5%", val: 1.5, term: 18 },
+            ],
+            principal: 25000,
+            totalEarn: 0,
+            leader: 75,
+            bank1: 50,
+            bank2: 35,
+            bank3: 25, 
+
         }
     },
     mounted() {
-        this.items = this.portfolioStore.bankItems;
+         this.items = this.portfolioStore.bankItems;
         // this.itemquery = this.portfolioStore.productquery[0];
-
+        // this.calcSave();
     },
 
     computed: {
-        ...mapStores(usePortfolioStore)
+        ...mapStores(usePortfolioStore),
+
+        formattedValue: {
+            get () {
+                return this.principal.toLocaleString();
+            },
+            set (newValue){
+                this.principal = Number(newValue.replace(/,/g, ''));
+            }
+        }
     },
+    methods:{
+        calcEarn (rate, upe){
+            let t = this.selected.term/12;
+            let r = rate /100;
+            let p = this.principal;
+            let n = 12;
+            let base = 1 + (r / n);
+            // Calculate the exponent
+            let exponent = n * t;
+            // Calculate A using the Math.pow() function
+            let a = p * Math.pow(base, exponent);
+            let ab = (a - p).toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+            })
+            if (upe > 0){
+            this.totalEarn = ab;
+            }
+            return ab
+        },
 
 
+    
+    }
 }
 </script>
 
 <template>
     <v-container>
-        <v-row>
-            <v-col>
-                This is an example of a products table built using DynamoDB to host the data and queried as an object to
-                the
-                front end.
-                This uses dynamo db's "scan" feature to return all items from the table. Before the route can be entered
-                we use
-                the "beforeEnter" feature from
-                vue-router to add conditional rendering of the component to wait for the data to be returned from the
-                API (or in
-                this case the dynamoDB scan). <a href="https://router.vuejs.org/guide/advanced/navigation-guards.html"
-                    target="_blank" aria-label="link to vue router">(see docs)</a>
-            </v-col>
-        </v-row>
+
         <v-row>
             <v-col>
                 <v-card max-width="1200" width="100%" class="p-4">
@@ -58,21 +87,27 @@ export default {
                         </v-col>
                     </v-row>
                     <v-row class="mx-0">
-                        <v-col col="6">
+                        <v-col col="6" class="rate-select">
                             <p>Select the product you're interested in</p>
                             <v-select
-                                :items="['4.30%', '3.25%', '2.75%', '4.10%',]"
-                                variant="outlined"> APY</v-select>
+                                :items="rates"
+                                item-title="text"
+                                item-value="val"
+                                v-model="selected"
+                                variant="outlined"
+                                return-object
+                                ></v-select>
                         </v-col>
                         <v-col cols="6">
                             <p>Enter an estimate for the balance</p>
-                            <v-text-field  variant="outlined"></v-text-field>
+                            <v-text-field prefix="$" v-model="formattedValue" variant="outlined"></v-text-field>
+
                         </v-col>
                     </v-row>
                     <v-row class="mx-0">
                         <v-col>
                             <p>Based on this information, you would earn <span class="fw-bold"
-                                    style="color:#9f2d20">$45,788</span> with a Leader Bank CD than at the
+                                    style="color:#9f2d20">${{ totalEarn }}</span> with a Leader Bank CD than at the
                                 average mega bank.</p>
                         </v-col>
                     </v-row>
@@ -93,20 +128,25 @@ export default {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr>
+                                        <td class="fw-bold">Leader Bank</td>
+                                        <td>{{ selected.val }}%</td>
+                                        <td>${{ calcEarn(selected.val, 1) }}</td>
+                                    </tr>
                                     <tr v-for="(item, index) in items" :key="item.name">
                                         <td class="fw-bold">{{ item.name }}</td>
                                         <td>{{ item.rate }}%</td>
-                                        <td>{{ item.rate * 3000 }}</td>
+                                        <td>${{ calcEarn(item.rate) }}</td>
                                     </tr>
                                 </tbody>
                             </v-table>
                         </v-col>
                         <v-col cols="12" md="6">
-                            <v-progress-linear v-model="power" color="#9f2d20" height="25"></v-progress-linear>
+                            <v-progress-linear v-model="leader" color="#9f2d20" height="25"></v-progress-linear>
                             <div style="color:#9f2d20;font-weight:bold">Leader Bank</div>
                             <br>
 
-                            <v-progress-linear v-model="skill" color="#ffad31" height="25">
+                            <v-progress-linear v-model="bank1" color="#ffad31" height="25">
                             
                             </v-progress-linear>
                             <div style="color:#ffad31;font-weight:bold">Mega</div>
@@ -114,13 +154,13 @@ export default {
 
                             <br>
 
-                            <v-progress-linear v-model="knowledge" color="#1e5895" height="25">
+                            <v-progress-linear v-model="bank2" color="#1e5895" height="25">
                                
                             </v-progress-linear>
                             <div style="color:#1e5895;font-weight:bold">Local</div>
                             <br>
 
-                            <v-progress-linear v-model="knowledge" color="green" height="25">
+                            <v-progress-linear v-model="bank3" color="green" height="25">
                           
                             </v-progress-linear>
                             <div style="color:#1dbf73;font-weight:bold">Digital</div>
@@ -134,19 +174,37 @@ export default {
     </v-container>
 </template>
 <style lang="scss">
-.table-col{
-    table{
+
+.rate-select{
+    .v-field__input{
+        width: unset !important;
+    }
+}
+.table-col {
+    table {
         border: solid 1px #DDE1E6;
-        thead{
+        border-radius: 10px;
+        thead {
             background-color: #9f2d20;
             color:white;
-            tr{
-                th{
+            tr {
+                th {
                     background: none !important;
                 }
             }
         }
-        
+        th:first-of-type {
+            border-top-left-radius: 10px;
+        }
+        th:last-of-type {
+            border-top-right-radius: 10px;
+        }
+        tr:last-of-type td:first-of-type {
+            border-bottom-left-radius: 10px;
+        }
+        tr:last-of-type td:last-of-type {
+            border-bottom-right-radius: 10px;
+        }               
     }
 }
    
