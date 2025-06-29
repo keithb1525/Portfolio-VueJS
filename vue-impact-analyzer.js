@@ -166,7 +166,16 @@ function generateImpactReport(fromBranch = 'main', toBranch = 'HEAD') {
     return impact && impact.riskLevel === 'HIGH';
   }).length;
 
+  // Determine if user testing is needed
+  const impacts = vueFiles.map(f => analyzeChangeImpact(f, fromBranch, toBranch)).filter(Boolean);
+  const hasUIChanges = impacts.some(i => i.uiImpact.length > 0);
+  const hasDataChanges = impacts.some(i => i.dataImpact.some(d => d.includes('props') || d.includes('emit')));
+  const hasFunctionalChanges = impacts.some(i => i.functionalImpact.length > 0);
+  const needsUserTesting = highRisk > 0 || hasUIChanges || hasDataChanges || hasFunctionalChanges;
+
   console.log('### 📋 Overall Assessment\n');
+  console.log(`**Testing Recommendation:** ${needsUserTesting}\n`);
+  
   if (highRisk > 0) {
     console.log(`🔴 **${highRisk} high-risk component(s)** - Thorough testing required`);
   } else {
