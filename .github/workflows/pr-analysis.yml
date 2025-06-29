@@ -26,8 +26,8 @@ jobs:
       - name: Run Vue Analysis
         id: analysis
         run: |
-          # Run the analyzer and capture output
-          node vue-detailed-analyzer.js origin/main HEAD > analysis-output.txt 2>&1
+          # Run the enhanced change analyzer
+          node vue-change-analyzer.js origin/main HEAD > analysis-output.txt 2>&1
           
           # Create formatted comment
           echo "## 🔍 Vue App Analysis Report" > comment.md
