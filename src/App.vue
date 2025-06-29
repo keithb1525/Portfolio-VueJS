@@ -3,21 +3,10 @@ import { RouterView } from 'vue-router'
 import NavBar from './components/navigation/NavBar.vue';
 import { mapStores } from 'pinia';
 import { usePortfolioStore } from '@/stores/stores'
-import AWS from 'aws-sdk';
-
 
 </script>
 
 <script>
-let awsConfig = {
-  region: 'us-east-1',
-  endpoint: 'http://dynamodb.us-east-1.amazonaws.com',
-  accessKeyId: import.meta.env.VITE_APP_DB_ACCESS_KEY, 
-  secretAccessKey: import.meta.env.VITE_APP_DB_SECRETACCESS_KEY
-};
-
-AWS.config.update(awsConfig);
-let docClient = new AWS.DynamoDB.DocumentClient();
 
 export default {
   
@@ -25,37 +14,10 @@ computed: {
   ...mapStores( usePortfolioStore )
 },
 
-methods:{
-  populateTables(){
-    let n = [];
-    let params = {
-    TableName: "WebsiteProducts",
-    };
-    docClient.scan( params, function (err, data) {
-        if (err) {
-          console.log("Error", err);
-          return null;
-        } else {
-          console.log("Success", data);
-          
-          let response = data.Items;
-
-          for(let i = 0; i < response.length; i++) {
-            n.push(response[i])
-          }
-
-        }
-      });
-      this.portfolioStore.productitems = n;
+methods: {
 
   }
-},
-
-beforeMount() {
-  // this.populateTables();
 }
-}
-
 
 </script>
 
@@ -68,7 +30,7 @@ beforeMount() {
 
   </header>
   
-  <div class="mx-5 my-5 main "> 
+  <div class="mx-5 my-5 main"> 
 
       <RouterView />
 
@@ -76,7 +38,7 @@ beforeMount() {
 </container>
 </template>
 
-<style >
+<style>
 
 .fade-in {
 	opacity: 1;
@@ -137,11 +99,30 @@ beforeMount() {
 header {
   line-height: 1.5;
   max-height: 100vh;
+  padding: 0 2rem;
 }
 
 body {
   width: 100%;
-  background-color: #b7b7b7; 
+  background-color: #0a1929; 
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 .v-row {
@@ -149,14 +130,21 @@ body {
   margin-right: 0;
   margin-top: 12px;
   margin-bottom: 12px;
-
 }
 
 .main{
   position: relative;
-    top: 48px;
+  top: 48px;
+  margin: 0 2rem;
+  padding: 1rem;
 }
 
+container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  color: white;
+}
 
 nav {
   font-size: 1.1rem;
@@ -177,12 +165,10 @@ nav a.router-link-exact-active:hover {
 }
 
 nav a {
-
   color: white;
   margin: 0 1rem;
   text-decoration: none;
   border-left: 1px solid var(--color-border);
 }
-
 
 </style>

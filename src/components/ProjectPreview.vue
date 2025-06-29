@@ -11,7 +11,7 @@ defineProps(['imageURL', 'title', 'category', 'description', 'route']);
 
             <v-card-text>
                 <div class="font-weight-bold ms-1 mb-2">{{ title }}</div>
-                <div class="ms-1 mb-2">Project Category </div>
+                <div class="ms-1 mb-2"> {{ category }} </div>
                 <div class="ms-1 mb-2">{{ description }}</div>
                  
             </v-card-text>

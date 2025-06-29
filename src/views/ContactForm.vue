@@ -10,6 +10,10 @@ export default {
             firstname: '',
             lastname: '',
             email: '',
+            rating: 0,
+            feedback: '',
+            feedbackType: '',
+            submitted: false,
             emailRules: [
                 value => {
                     if (value) return true
@@ -24,66 +28,81 @@ export default {
             ],
         }
     },
-
-
+    methods: {
+        validate() {
+            if (this.$refs.form.validate()) {
+                // Form validation logic would go here
+                // In a real app, you would submit to a server here
+                this.submitted = true;
+            }
+        },
+        resetForm() {
+            // Just reset the form data manually instead of using ref
+            this.firstname = '';
+            this.lastname = '';
+            this.email = '';
+            this.rating = 0;
+            this.feedback = '';
+            this.feedbackType = '';
+            this.submitted = false;
+        }
+    }
 }
 </script>
 
 <template>
-
+    <h2 class="text-h4 mb-6 text-center py-4 font-weight-bold">Website Feedback</h2>
+    
     <v-sheet class="pa-4 text-start mx-auto" elevation="12" max-width="600" rounded="lg" width="100%">
+        <!-- Thank you screen -->
+        <div v-if="submitted" class="text-center py-8">
+            <v-icon icon="mdi-check-circle" color="success" size="x-large" class="mb-4"></v-icon>
+            <h2 class="text-h4 mb-4">Thank You!</h2>
+            <p class="mb-6">Your feedback has been submitted successfully. We appreciate your input!</p>
+            <v-btn color="primary" @click="resetForm">Submit Another Response</v-btn>
+        </div>
 
-        <h2 class="text-h5 mb-6 text-center py-4">Submit a ticket</h2>
+        <!-- Feedback form -->
+        <div v-else>
+            <v-form ref="form" class="p-4">
+                <v-row>
+                    <v-col cols="12">
+                        <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <v-text-field v-model="firstname" label="First name"></v-text-field>
+                    </v-col>
+                    <v-col cols="12" md="6">
+                        <v-text-field v-model="lastname" label="Last name"></v-text-field>
+                    </v-col>
+                </v-row>
 
-        <v-form ref="form" class="p-4">
+                <v-select v-model="feedbackType" label="What are you providing feedback about?" 
+                    :items="['Website Design', 'Content', 'User Experience', 'Performance', 'Other']">
+                </v-select>
 
-            <v-autocomplete label="Department" :items="['DevTeam', 'IT Support', 'SBL Support',]"></v-autocomplete>
+                <div class="mb-2">How would you rate your experience?</div>
+                <v-rating v-model="rating" color="amber" hover></v-rating>
 
-            <v-autocomplete label="Priority" :items="['Low', 'Medium', 'High']"></v-autocomplete>
+                <v-textarea v-model="feedback" label="Your Feedback:" placeholder="Please share your thoughts, suggestions, or concerns"></v-textarea>
 
-            <v-row>
-                <v-col cols="12">
-                    <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                    <v-text-field v-model="firstname" :rules="nameRules" label="First name"
-                        required></v-text-field>
-                </v-col>
+                <div class="d-flex flex-column">
+                    <v-btn class="mt-4" color="primary" block @click="validate">
+                        Submit Feedback
+                    </v-btn>
+                </div>
 
-                <v-col cols="12" md="6">
-                    <v-text-field v-model="lastname" :rules="nameRules" label="Last name"
-                        required></v-text-field>
-                </v-col>
-            </v-row>
-        
+                <br>
 
-            <v-textarea label="Message:"></v-textarea>
-
-            <div>Upload Documents</div>
-            <v-file-upload density="comfortable" variant="comfortable"></v-file-upload>
-
-            <div class="d-flex flex-column">
-                <v-btn class="mt-4" color="success" block @click="validate">
-                    Submit
-                </v-btn>
-
-            </div>
-
-            <br>
-
-                    <p class="mb-4 text-medium-emphasis text-body-2">
-                        This form is for internal use only. If you are experiencing any issues with the form please submit a ticket via email. Alternatively 
-                    </p>
-        
-        </v-form>
-
-   
+                <p class="mb-4 text-medium-emphasis text-body-2">
+                    Thank you for taking the time to provide feedback. Your input helps us improve our website and services.
+                </p>
+            </v-form>
+        </div>
 
         <v-divider class="mb-4"></v-divider>
 
         <div class="text-end">
-      
         </div>
     </v-sheet>
-
 </template>
