@@ -26,15 +26,11 @@ jobs:
       - name: Run Vue Analysis
         id: analysis
         run: |
-          # Run the enhanced change analyzer
-          node vue-change-analyzer.js origin/main HEAD > analysis-output.txt 2>&1
+          # Run the impact analyzer
+          node vue-impact-analyzer.js origin/main HEAD > analysis-output.txt 2>&1
           
           # Create formatted comment
-          echo "## 🔍 Vue App Analysis Report" > comment.md
-          echo "" >> comment.md
-          echo "\`\`\`" >> comment.md
-          cat analysis-output.txt >> comment.md
-          echo "\`\`\`" >> comment.md
+          cat analysis-output.txt > comment.md
       
       - name: Comment PR
         uses: actions/github-script@v7
