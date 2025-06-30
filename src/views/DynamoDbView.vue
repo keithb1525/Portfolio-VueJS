@@ -1,39 +1,29 @@
-<script setup>
+<script>
 import { usePortfolioStore } from '@/stores/stores';
 import { mapStores } from 'pinia';
 
-</script>
-
-<script>
-
 export default {
-data() {
-  return {
-    items: [],
-    itemquery: null,  // Initialize as null instead of an empty array
-    routeLoading: true
-  }
-},
+  data() {
+    return {
+      items: [],
+      itemquery: null,
+      routeLoading: true
+    }
+  },
 
   mounted() {
-    // Set initial loading state
     this.routeLoading = true;
     
-    // Simulate loading delay when switching routes
     setTimeout(() => {
       this.items = this.portfolioStore.productitems;
       this.itemquery = this.portfolioStore.productquery[0];
-      
-      // Hide loading spinner
       this.routeLoading = false;
     }, 800);
   },
 
   computed: {
     ...mapStores(usePortfolioStore)
-  },
-
-
+  }
 }
 </script>
 

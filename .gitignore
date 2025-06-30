@@ -29,3 +29,6 @@ coverage
 *.env
 
 *.tsbuildinfo
+
+# Batch files
+*.bat
